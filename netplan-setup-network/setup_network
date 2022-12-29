@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+rm -rf /etc/netplan/net-default.yaml
+echo "network:" >> /etc/netplan/net-default.yaml
+echo "  ethernets:" >> /etc/netplan/net-default.yaml
+for net in $(ip -br link show | awk {'print $1'}); do
+    if [ $net != "lo" ]; then
+        echo "    $net:" >> /etc/netplan/net-default.yaml
+        echo "      dhcp4: true" >> /etc/netplan/net-default.yaml
+    fi
+done
+echo "  version: 2" >> /etc/netplan/net-default.yaml
+
+netplan apply
